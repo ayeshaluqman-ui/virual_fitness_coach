@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Virtual Fitness Coach - Login</title>
+    <style>
+
+        /* ---------- BACKGROUND ANIMATION ---------- */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #b3c7ff, #e5b3ff);
+            height: 100vh; margin: 0;
+            display: flex; justify-content: center; align-items: center;
+            overflow: hidden;
+        }
+
+        /* Floating cartoon shapes */
+        .shape {
+            position: absolute;
+            width: 120px; height: 120px;
+            background: rgba(255,255,255,0.25);
+            border-radius: 50%;
+            animation: float 6s infinite ease-in-out;
+        }
+        .shape:nth-child(1){ top:10%; left:10%; animation-duration: 7s; }
+        .shape:nth-child(2){ bottom:15%; right:15%; animation-duration: 5s; }
+        .shape:nth-child(3){ top:55%; left:75%; animation-duration: 8s; }
+
+        @keyframes float {
+            0%{ transform:translateY(0) rotate(0deg); }
+            50%{ transform:translateY(-30px) rotate(20deg); }
+            100%{ transform:translateY(0) rotate(0deg); }
+        }
+
+        /* ---------- CONTAINER ---------- */
+        .container {
+            width: 380px;
+            padding: 40px;
+            text-align: center;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.8);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 30px rgba(0,0,0,0.2);
+            animation: pop 0.6s ease;
+        }
+        @keyframes pop {
+            from { transform: scale(0.5); opacity: 0; }
+            to   { transform: scale(1); opacity: 1; }
+        }
+
+        h2 { color:#4f46e5; font-size: 28px; }
+
+        /* ---------- INPUTS ---------- */
+        input {
+            width: 90%;
+            padding: 12px;
+            margin: 12px 0;
+            border-radius: 10px;
+            border: 1px solid #bbb;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+        input:focus {
+            border-color:#6d5dfc;
+            box-shadow:0 0 8px #6d5dfc;
+            outline:none;
+        }
+
+        /* ---------- BUTTON ---------- */
+        button {
+            padding: 12px 20px;
+            width: 95%;
+            border-radius: 10px;
+            background:#6d5dfc;
+            color:white;
+            border:none;
+            cursor:pointer;
+            font-size: 18px;
+            margin-top:10px;
+            transition:0.3s;
+        }
+        button:hover {
+            background:#5543d8;
+            transform: scale(1.05);
+        }
+
+        /* Login–Signup Links */
+        a {
+            color:#4f46e5;
+            text-decoration:none;
+            cursor:pointer;
+        }
+        a:hover { text-decoration:underline; }
+
+        #error, #errorSignup { color:red; font-size:13px; }
+
+        /* Toggle Animations */
+        #loginBox, #signupBox {
+            transition: 0.5s ease;
+        }
+
+        /* Cute Cartoon Emoji */
+        .cartoon {
+            font-size: 60px;
+            animation: bounce 1.5s infinite ease-in-out;
+        }
+        @keyframes bounce {
+            0%{ transform: translateY(0); }
+            50%{ transform: translateY(-15px); }
+            100%{ transform: translateY(0); }
+        }
+
+    </style>
+</head>
+
+<body>
+
+<!-- Animated Shapes -->
+<div class="shape"></div>
+<div class="shape"></div>
+<div class="shape"></div>
+
+<!-- LOGIN -->
+<div class="container" id="loginBox">
+    <div class="cartoon">🏋️‍♂️</div>
+    <h2>Welcome Back!</h2>
+    <input type="text" id="loginUsername" placeholder="Username">
+    <input type="password" id="loginPassword" placeholder="Password">
+    <button onclick="login()">Login</button>
+    <p id="error"></p>
+
+    <p>Don't have an account?
+        <a onclick="showSignup()">Signup</a>
+    </p>
+</div>
+
+<!-- SIGNUP -->
+<div class="container" id="signupBox" style="display:none;">
+    <div class="cartoon">💪😄</div>
+    <h2>Create Account</h2>
+    <input type="text" id="signupUsername" placeholder="Username">
+    <input type="password" id="signupPassword" placeholder="Password">
+    <button onclick="signup()">Signup</button>
+    <p id="errorSignup"></p>
+    <p>Already have an account?
+        <a onclick="showLogin()">Login</a>
+    </p>
+</div>
+
+<script>
+
+    function showSignup(){
+        document.getElementById("loginBox").style.opacity="0";
+        setTimeout(()=>{
+            document.getElementById("loginBox").style.display="none";
+            document.getElementById("signupBox").style.display="block";
+            document.getElementById("signupBox").style.opacity="1";
+        },300);
+    }
+
+    function showLogin(){
+        document.getElementById("signupBox").style.opacity="0";
+        setTimeout(()=>{
+            document.getElementById("signupBox").style.display="none";
+            document.getElementById("loginBox").style.display="block";
+            document.getElementById("loginBox").style.opacity="1";
+        },300);
+    }
+
+    function signup(){
+        const username = document.getElementById("signupUsername").value.trim();
+        const password = document.getElementById("signupPassword").value.trim();
+        const error = document.getElementById("errorSignup");
+
+        if(!username || !password){
+            error.textContent = "Enter username & password!";
+            return;
+        }
+
+        let users = JSON.parse(localStorage.getItem("users") || "{}");
+
+        if(users[username]){
+            error.textContent = "Username already exists!";
+            return;
+        }
+
+        users[username] = password;
+        localStorage.setItem("users", JSON.stringify(users));
+
+        alert("Signup successful! Please login.");
+        showLogin();
+    }
+
+    function login(){
+        const username = document.getElementById("loginUsername").value.trim();
+        const password = document.getElementById("loginPassword").value.trim();
+        const error = document.getElementById("error");
+
+        if(!username || !password){
+            error.textContent = "Enter username & password!";
+            return;
+        }
+
+        let users = JSON.parse(localStorage.getItem("users") || "{}");
+
+        if(users[username] && users[username] === password){
+            localStorage.setItem("currentUser", username);
+
+            // Redirect to main fitness page
+            window.location.href = "fitness.html";
+        }
+        else {
+            error.textContent = "Invalid username or password!";
+        }
+    }
+
+</script>
+
+</body>
+</html>
